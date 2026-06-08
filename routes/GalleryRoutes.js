@@ -60,7 +60,7 @@ router.post(
           order,
 
           image: req.file
-            ? `/uploads/${req.file.filename}`
+            ? req.file.path
             : "",
         });
 
@@ -124,7 +124,7 @@ router.put(
         req.body.order || post.order;
 
       if (req.file) {
-        post.image = `/uploads/${req.file.filename}`;
+        post.image = req.file.filename;
       }
 
       await post.save();

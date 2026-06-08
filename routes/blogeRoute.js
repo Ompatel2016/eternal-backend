@@ -58,7 +58,7 @@ router.post(
         order,
 
         image: req.file
-          ? `/uploads/${req.file.filename}`
+          ? req.file.filename
           : "",
       });
 
@@ -130,7 +130,7 @@ router.put(
         req.body.order || blog.order;
 
       if (req.file) {
-        blog.image = `/uploads/${req.file.filename}`;
+        blog.image = req.file.filename;
       }
 
       await blog.save();

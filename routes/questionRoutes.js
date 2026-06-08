@@ -6,7 +6,7 @@ const auth = require("../middelware/auth");
 const role = require("../middelware/role");
 
 const Question = require("../models/QustionModel");
-const multer = require("multer");
+const upload = require("../middelware/upload");
 const Study = require("../models/StudentContentModel");
 const Exam = require("../models/ExamModel");
 const Assign = require("../models/AssignModel");
@@ -108,17 +108,6 @@ router.delete("/delete/:id", auth, role("counselor"), async (req, res) => {
   }
 });
 
-// ================= FILE UPLOAD CONFIG =================
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/");
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + "-" + file.originalname);
-  },
-});
-
-const upload = multer({ storage });
 
 // ✅ UPLOAD STUDY
 router.post("/study/upload", upload.single("file"), async (req, res) => {
@@ -128,7 +117,7 @@ router.post("/study/upload", upload.single("file"), async (req, res) => {
     const study = new Study({
       title,
       category,
-      file: req.file ? req.file.filename : "",
+      file: req.file ? req.file.path : "",
       videoLink,
     });
 
@@ -178,7 +167,7 @@ router.post("/exam/upload", upload.single("file"), async (req, res) => {
     const exam = new Exam({
       title,
       examDate,
-      file: req.file ? req.file.filename : "",
+      file: req.file ? req.file.path : "",
       assignType,
       studentId: assignType === "specific" ? studentId : null,
     });

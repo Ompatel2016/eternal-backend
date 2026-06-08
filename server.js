@@ -3,7 +3,6 @@ require("dotenv").config(); // 👈 load .env
 const express = require("express");
 const cors  = require("cors");
 const mongoose = require("mongoose");
-
 const userRoutes = require("./routes/userRoutes");
 const Coutryroutes = require("./routes/countryRoutes");
 const universityRout = require("./routes/UniversityRout");
@@ -15,12 +14,13 @@ const GalleryPost = require("./routes/GalleryRoutes");
 
 const app = express();
 
+const dns = require('dns');
+dns.setServers(["1.1.1.1","8.8.8.8"])
+
 // Middleware
 app.use(cors());
 app.use(express.json());
 
-// 🔥 SERVE UPLOADED FILES
-app.use("/uploads", express.static("uploads"));
 
 app.use("/api/users", userRoutes);
 app.use("/api/coutrys", Coutryroutes);

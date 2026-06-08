@@ -16,6 +16,7 @@ const Receipt = require("../models/RecieptModel");
 const PDFDocument = require("pdfkit");
 const fs = require("fs");
 const path = require("path");
+const cloudinary = require("../cloudinary");
 // ================= VISA SYSTEM =================
 const Visa = require("../models/VisaapplicationModel");
 const Feedback = require("../models/Feedback");
@@ -936,7 +937,24 @@ router.post(
         });
 
         doc.end();
+
+        // Wait until file is fully written
+        await new Promise((resolve, reject) => {
+          stream.on("finish", resolve);
+          stream.on("error", reject);
+        });
       
+         // Upload PDF to Cloudinary
+        const result =
+          await cloudinary.uploader.upload(
+            filePath,
+            {
+              resource_type: "raw",
+              folder: "receipts",
+            }
+          );
+
+
 
       // 💾 Save in DB
       const receipt = new Receipt({
@@ -944,10 +962,13 @@ router.post(
         paymentId: payment._id,
         amount: payment.amount,
         receiptNumber: "RCPT" + Date.now(),
-        fileUrl: filePath   // 🔥 important
+        fileUrl: result.secure_url,  // 🔥 important
       });
 
       await receipt.save();
+
+       // Delete local temp file
+      fs.unlinkSync(filePath);
 
       // 🔥 mark payment
       payment.receiptGenerated = true;

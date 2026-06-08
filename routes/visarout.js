@@ -5,17 +5,8 @@ const router = express.Router();
 const auth = require("../middelware/auth");
 const role = require("../middelware/role");
 
-const multer = require("multer");
 const Visa = require("../models/VisaapplicationModel");
-
-// ================= FILE UPLOAD =================
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, "uploads/"),
-  filename: (req, file, cb) =>
-    cb(null, Date.now() + "-" + file.originalname),
-});
-
-const upload = multer({ storage });
+const upload = require("../middelware/upload");
 
 // ================= DEFAULT STEPS =================
 const getSteps = () => [
@@ -36,7 +27,7 @@ router.post("/create", auth, upload.array("documents"), async (req, res) => {
 
     const docs = req.files.map((file) => ({
       name: file.originalname,
-      file: file.filename,
+      file: file.path,
     }));
 
     let assignedTo = null;

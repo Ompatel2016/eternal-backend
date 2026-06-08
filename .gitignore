@@ -25,3 +25,7 @@ yarn-error.log*
 node_modules
 .env
 uploads
+
+.vs/
+node_modules/
+.env
